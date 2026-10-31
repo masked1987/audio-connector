@@ -18,6 +18,20 @@ Rules the owner set:
   30 credits, Seedance 2.0 fast 480p 10, Seedance 2.5 480p 30, Kling 4.0 720p
   22.5.
 
+## How the owner wants scenes made (feedback 2026-10-31)
+
+- **Mixed, changing expressions.** Faces should not hold one steady look. Use
+  combinations and changes within a shot whenever there's a chance: amazed and
+  scared, happy and sad, shy then proud, nervous then relieved. Write the
+  change into the prompt (e.g. "his face shifts from fear to wonder").
+- **Match the owner's own art style.** The first flashback came out looking
+  like a 2D painted storybook, which is "completely different" from the
+  owner's pictures. The owner's style is a clean stylized 3D character render
+  (soft studio-like light, real material textures: knit, leather, denim,
+  metal), like their character sheets. Don't write "painterly" in prompts.
+  Before animating, compare each start picture side by side with the owner's
+  sheet for that character and redo it if the look differs.
+
 ## The world
 
 - **Veyron Hollow**: a gothic, industrial city with canals, bridges and chimneys,
@@ -139,7 +153,8 @@ Higgsfield video jobs, shots 1-6: aae26bda-6a39-496c-af41-fb1d9b7773bf,
 045ee568-9567-4ee6-b2d2-8ceaa767ec4a, e3a0cc8a-aa44-47d5-8b04-d24c90b73b70,
 5ae6796f-2d1c-4c6e-93e5-10c2835f9ca8. Start pictures: 2a27e960, 5be4c725,
 f794d3a6, dcd3c98c, 4f69b040, 8dcf453f (same job-id prefixes).
-Known flaw: in shot 6 the charm briefly vanishes from Zac's palm before he
+Owner feedback: the look is too different from their own art style, and faces
+should show more mixed emotions. Known flaw: in shot 6 the charm briefly vanishes from Zac's palm before he
 closes his hand. Dialogue not checked by ear yet (Gemini key was out of quota).
 How-to that worked: Seedance 2.0 batch needs `declined_preset_id` when
 Higgsfield suggests a preset instead of submitting; only about 5 Seedance jobs
