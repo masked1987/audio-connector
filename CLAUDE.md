@@ -25,6 +25,17 @@ When the owner asks you to listen to something:
 - The key is `GEMINI_API_KEY` in the environment settings. Never ask for it in
   chat, never write it into the repo. `node listen.mjs --check` tests it.
 
+## The owner's music
+
+- Makes tracks in Suno (paid plan, commercial rights), mostly epic cinematic
+  orchestral; posts them as original sound on TikTok. Keeps the date and prompt
+  of each track as proof; if TikTok flags one by mistake, appeal with that.
+- Idea to follow up: release tracks through a distributor (e.g. DistroKid) so
+  they're in TikTok's sound library and earn when people use them. Check
+  Suno's terms for distribution first.
+- Gemini once named "Mechanical City" as Two Steps From Hell's "Winterspell";
+  a side-by-side check (lite model) said it's only the same style, not a copy.
+
 ## Things that bite
 
 - No key / bad key / quota: the code turns Google's errors into a sentence that
