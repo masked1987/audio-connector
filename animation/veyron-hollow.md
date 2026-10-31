@@ -116,3 +116,22 @@ gauntlets).
   Pick one style per video.
 - An old "Lyra version" on the needle-launcher sheet has red hair; use the
   saved Lyra Voss instead.
+
+## Scene ideas
+
+### Flashback: little Zac meets Tex (not made yet)
+
+About 30 seconds, 3 clips of 10 s, Seedance 2.0 fast, 480p, 9:16, with sound.
+Quoted 30 credits in total (10 per clip); waiting for the owner's yes.
+Elements: Zac-Hale-Age-10, Tex-Brannock, Texs-Forge-Outside, Texs-Forge-Inside,
+Heated-Sword.
+
+1. Dusk at the docks. Zac hides by the open forge doors and spies on Tex
+   hammering a glowing sword; sparks fly. Zac whispers "Whoa..." Tex, without
+   turning: "You can come in, you know. I don't bite."
+2. Inside. Zac steps closer, eyes wide. Tex plunges the blade into water, steam
+   hisses. Zac: "How do you make it shine like that?" Tex: "Fire, patience, and
+   a stubborn arm."
+3. Tex laughs, takes a small brass wheel charm from his bench and puts it in
+   Zac's hand: "Keep it, little one. Every smith starts somewhere." Zac holds it
+   tight and smiles.
