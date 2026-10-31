@@ -48,6 +48,8 @@ saved before the last names were chosen, so their saved names are short
 | Mara (adult) | 77623996-8d70-4c8a-a30f-1b239e8bb8e8 | Teal hooded coat. |
 | King Brooks (adult) | 5f053787-3ddc-4b96-a793-2fd595fed22e | Saved as "King-Brooks-Adult". Royal blue cropped jacket, crown on the sleeve, cargo capris with orange stripe, black zip boots. Body sheets look 3D, face sheets painterly. |
 | Zac Hale (adult) | a167a245-1fc9-4298-82d1-fa60aa226204 | Saved as "Zac-Hale-Adult". Painterly. Orange hoodie, chain, black distressed jacket with orange patch, amber eyes. |
+| King Brooks (age 10) | c2ce8c76-06ef-441c-ad7d-29a3c15b03ad | Saved as "King-Brooks-Age-10". Smooth 3D. Denim jacket with crown on the chest pocket, cargo shorts, same zip boots as adult King. |
+| Zac Hale (age 10) | a8fc5713-4b18-4c75-9aee-67a70c826ce7 | Saved as "Zac-Hale-Age-10". Green knit sweater with elbow patches, satchel with a brass wheel "forge keepsake" charm, notebook with a city map. Freckles. |
 
 ### Heroes and townsfolk
 
@@ -97,6 +99,8 @@ gauntlets).
 
 ## Open questions
 
+- Zac's "forge keepsake" (brass wheel charm): what is it, and is it tied to Tex
+  Brannock or his forge?
 - Are Tobin and Vivienne Rook family?
 - Magnus Valcrest: tied to the casino or to Malakai's research?
 - Art style: Mara (teen) and King are smooth 3D; most others are painterly.
