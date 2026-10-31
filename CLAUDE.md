@@ -25,6 +25,14 @@ When the owner asks you to listen to something:
 - The key is `GEMINI_API_KEY` in the environment settings. Never ask for it in
   chat, never write it into the repo. `node listen.mjs --check` tests it.
 
+## Animation project (Veyron Hollow)
+
+The owner also uses these sessions for an animated story. Its characters,
+places and gear are saved in the owner's Higgsfield account. Read
+`animation/veyron-hollow.md` first; it has every name, Higgsfield element ID,
+who looks after whom, and the open questions. Keep it up to date. Never spend
+Higgsfield credits without the owner's go-ahead and a stated price.
+
 ## Things that bite
 
 - No key / bad key / quota: the code turns Google's errors into a sentence that
