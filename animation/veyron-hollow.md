@@ -46,6 +46,8 @@ saved before the last names were chosen, so their saved names are short
 | Mara (teen) | df66fa86-91b3-4edb-998c-da079ba605e1 | Mara Dorran. Smooth 3D look. |
 | Mara (age 7) | 2076f1bf-b0d5-4b57-acf9-c5821437951a | Young Mara. |
 | Mara (adult) | 77623996-8d70-4c8a-a30f-1b239e8bb8e8 | Teal hooded coat. |
+| King Brooks (adult) | 5f053787-3ddc-4b96-a793-2fd595fed22e | Saved as "King-Brooks-Adult". Royal blue cropped jacket, crown on the sleeve, cargo capris with orange stripe, black zip boots. Body sheets look 3D, face sheets painterly. |
+| Zac Hale (adult) | a167a245-1fc9-4298-82d1-fa60aa226204 | Saved as "Zac-Hale-Adult". Painterly. Orange hoodie, chain, black distressed jacket with orange patch, amber eyes. |
 
 ### Heroes and townsfolk
 
