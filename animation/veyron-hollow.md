@@ -7,7 +7,7 @@ owner's **Higgsfield** account as reusable "elements" (Higgsfield MCP tool
 
 Rules the owner set:
 - Nothing gets generated (no credits spent) until the owner says so, and the
-  price is said first. Balance on 2026-10-31: 283.5 credits, Pro plan.
+  price is said first. Balance on 2026-10-31: 181.5 credits after the Zac-meets-Tex flashback, Pro plan.
 - Element names can't be changed once saved, so confirm full names first.
 - Every character has a first and last name.
 - Video settings: use only **Seedance 2.0, Seedance 2.5 or Kling 4.0**, at
@@ -119,7 +119,7 @@ gauntlets).
 
 ## Scene ideas
 
-### Flashback: little Zac meets Tex (not made yet)
+### Flashback: little Zac meets Tex (made 2026-10-31)
 
 Owner wants top quality motion and control, characters and background kept
 true to the saved elements; shot length is up to Claude. Plan (2026-10-31):
@@ -131,6 +131,19 @@ true to the saved elements; shot length is up to Claude. Plan (2026-10-31):
   as the start frame, 15 credits per 5 s shot = 90 credits.
 - Total about 102 credits (cheaper fast-mode videos: 30 + 12 = 42).
 - Seedance 2.0 shots are 4 to 15 s; 3 s is not possible.
+
+Made on 2026-10-31 with the owner's go-ahead; cost exactly 102 credits.
+Joined 30-second video: `animation/zac-meets-tex-flashback.mp4`.
+Higgsfield video jobs, shots 1-6: aae26bda-6a39-496c-af41-fb1d9b7773bf,
+2f56520b-c16d-41f1-86a9-ca218503e3fd, 70431c33-2d5c-47a3-a6b4-ab6c21a0a9cf,
+045ee568-9567-4ee6-b2d2-8ceaa767ec4a, e3a0cc8a-aa44-47d5-8b04-d24c90b73b70,
+5ae6796f-2d1c-4c6e-93e5-10c2835f9ca8. Start pictures: 2a27e960, 5be4c725,
+f794d3a6, dcd3c98c, 4f69b040, 8dcf453f (same job-id prefixes).
+Known flaw: in shot 6 the charm briefly vanishes from Zac's palm before he
+closes his hand. Dialogue not checked by ear yet (Gemini key was out of quota).
+How-to that worked: Seedance 2.0 batch needs `declined_preset_id` when
+Higgsfield suggests a preset instead of submitting; only about 5 Seedance jobs
+run at once (a 6th gets "rate_limit_reached" until one finishes).
 
 Elements: Zac-Hale-Age-10, Tex-Brannock, Texs-Forge-Outside, Texs-Forge-Inside,
 Heated-Sword.
