@@ -33,7 +33,8 @@ Decided 2026-10-31. The kids take their caretaker's last name.
 
 Other ties:
 - Tex Brannock becomes Zac's close friend later on (the owner thought about
-  Tex as Zac's caretaker but chose Evelyn).
+  Tex as Zac's caretaker but chose Evelyn). Zac met Tex once when he was
+  little; that is where his "forge keepsake" (brass wheel charm) comes from.
 
 ## Characters (Higgsfield element IDs)
 
@@ -103,9 +104,6 @@ gauntlets).
 
 ## Open questions
 
-- Zac's "forge keepsake" (brass wheel charm): what is it? Zac already has it at
-  age 10, but his friendship with Tex comes later, so it may come from somewhere
-  else, or from an earlier meeting with Tex.
 - Are Tobin and Vivienne Rook family?
 - Magnus Valcrest: tied to the casino or to Malakai's research?
 - Art style: Mara (teen) and King are smooth 3D; most others are painterly.
