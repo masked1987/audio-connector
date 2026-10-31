@@ -36,6 +36,11 @@ When the owner asks you to listen to something:
 - Gemini once named "Mechanical City" as Two Steps From Hell's "Winterspell";
   a side-by-side check (lite model) said it's only the same style, not a copy.
 
+## Video generation (Higgsfield)
+
+- When generating video in Higgsfield, use Seedance 2.0, Seedance 2.5 or
+  Kling 4.0, at 480p, in 9:16 (vertical). The owner's rule; don't pick others.
+
 ## Things that bite
 
 - No key / bad key / quota: the code turns Google's errors into a sentence that
