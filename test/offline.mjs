@@ -6,11 +6,12 @@ import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { listen, check, parseTime, clock, youtubeUrl, prompt, ListenError } from '../gemini.mjs';
+import { listen, check, parseTime, clock, youtubeUrl, prompt, forgetModel, ListenError } from '../gemini.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(here, '..');
 const dir = mkdtempSync(path.join(tmpdir(), 'audio-connector-'));
+process.env.GEMINI_AUDIO_CACHE = path.join(dir, 'model.json');   // never touch the real one
 const fast = { _retryMs: [1, 1], _pollMs: 1 };
 let passed = 0;
 const tests = [];
@@ -21,6 +22,7 @@ const reset = (key = 'test-key') => {
   if (key) process.env.GEMINI_API_KEY = key; else delete process.env.GEMINI_API_KEY;
   delete process.env.GOOGLE_API_KEY;
   delete process.env.GEMINI_MODEL;
+  forgetModel();
 };
 const rejects = (p, re) => assert.rejects(p, (e) => e instanceof ListenError && re.test(e.message));
 
@@ -157,19 +159,49 @@ test('busy Gemini is retried; lyric block is explained', async () => {
   globalThis.fake.busy = 5;
   await rejects(listen({ source: 'https://youtu.be/dQw4w9WgXcQ', ...fast }), /\(503\): The model is overloaded/);
   reset();
+  globalThis.fake.busyModels = ['gemini-flash-latest', 'gemini-3.8-flash'];
+  globalThis.fake.models = ['gemini-3.8-flash', 'gemini-3.5-flash', 'gemini-3-flash-preview'];
+  assert.equal((await listen({ source: 'https://youtu.be/dQw4w9WgXcQ', ...fast })).model, 'gemini-3.5-flash');
+  // The next request starts with the model that worked, and does not ask for the list again.
+  globalThis.fakeCalls.length = 0;
+  assert.equal((await listen({ source: 'https://youtu.be/dQw4w9WgXcQ', ...fast })).model, 'gemini-3.5-flash');
+  assert.equal(globalThis.fakeCalls.length, 1);
+  // A model the user picked is not swapped.
+  process.env.GEMINI_MODEL = 'gemini-3.8-flash';
+  await rejects(listen({ source: 'https://youtu.be/dQw4w9WgXcQ', ...fast }), /\(503\): This model is currently/);
+  reset();
+  globalThis.fake.busyModels = ['gemini-flash-latest', 'gemini-3.5-flash'];
+  globalThis.fake.models = ['gemini-3.5-flash'];
+  await rejects(listen({ source: 'https://youtu.be/dQw4w9WgXcQ', ...fast }), /\(503\): This model is currently/);
+  reset();
   globalThis.fake.finish = 'RECITATION';
   await rejects(listen({ source: 'https://youtu.be/dQw4w9WgXcQ', ...fast }), /copyrighted material/);
 });
 
-test('slow answers time out with a plain message', async () => {
+test('slow answers time out with a plain message; a stuck model is swapped', async () => {
   reset();
   globalThis.fake.slowMs = 1000;
   await rejects(listen({ source: 'https://youtu.be/dQw4w9WgXcQ', _timeoutMs: 50, ...fast }), /more than 10 minutes/);
+  reset();
+  globalThis.fake.stuckModels = ['gemini-flash-latest'];
+  globalThis.fake.models = ['gemini-3.5-flash'];
+  assert.equal((await listen({ source: 'https://youtu.be/dQw4w9WgXcQ', _stallMs: 30, ...fast })).model, 'gemini-3.5-flash');
+  reset();
+  globalThis.fake.stuckModels = ['gemini-flash-latest'];
+  await rejects(listen({ source: 'https://youtu.be/dQw4w9WgXcQ', _stallMs: 30, ...fast }), /didn't answer/);
 });
 
 test('setup check', async () => {
   reset();
-  assert.match((await check()).text, /accepted the key\. Model gemini-flash-latest is ready/);
+  assert.match((await check()).text, /accepted the key\. Model gemini-flash-latest is ready\./);
+  reset();
+  globalThis.fake.busyModels = ['gemini-flash-latest'];
+  globalThis.fake.models = ['gemini-3.5-flash'];
+  const busy = await check(fast);
+  assert.equal(busy.ok, true);
+  assert.match(busy.text, /Model gemini-3\.5-flash is ready \(gemini-flash-latest didn't answer/);
+  reset('bad');
+  assert.match((await check()).text, /rejected the API key/);
   reset(null);
   const r = await check();
   assert.equal(r.ok, false);

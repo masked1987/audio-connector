@@ -44,6 +44,11 @@ globalThis.fetch = async (input, init = {}) => {
     if (gen) {
       const model = decodeURIComponent(gen[1]);
       if ((f.goneModels || []).includes(model)) return json({ error: { code: 404, message: `models/${model} is not found`, status: 'NOT_FOUND' } }, 404);
+      if ((f.busyModels || []).includes(model)) return json({ error: { code: 503, message: 'This model is currently experiencing high demand.', status: 'UNAVAILABLE' } }, 503);
+      if ((f.stuckModels || []).includes(model)) {   // never answers; the timer stands in for the open connection
+        await new Promise((r, j) => { const keep = setInterval(() => {}, 1000);
+          init.signal?.addEventListener('abort', () => { clearInterval(keep); j(init.signal.reason); }); });
+      }
       if (f.busy > 0) { f.busy--; return json({ error: { code: 503, message: 'The model is overloaded.', status: 'UNAVAILABLE' } }, 503); }
       if (f.slowMs) await new Promise((r, j) => { const t = setTimeout(r, f.slowMs); init.signal?.addEventListener('abort', () => { clearTimeout(t); j(init.signal.reason); }); });
       if (f.finish === 'RECITATION') return json({ candidates: [{ finishReason: 'RECITATION', content: { parts: [] } }] });

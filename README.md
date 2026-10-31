@@ -32,8 +32,9 @@ Google's Files API and are deleted right after).
 3. Check it: `node listen.mjs --check`
 
 Optional: `GEMINI_MODEL` picks another model (default `gemini-flash-latest`, Google's
-name for its newest Flash model; if Google ever drops that name, the newest stable
-Flash model is picked automatically).
+name for its newest Flash model). Without it, if a model is busy, gone or stuck,
+the connector switches to the next newest Flash model by itself and keeps using
+the one that worked. `GEMINI_AUDIO_DEBUG=1` shows which models it tried.
 
 ## Using it
 

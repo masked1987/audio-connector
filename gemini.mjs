@@ -2,7 +2,8 @@
 // back, in words, what it hears. Used by server.mjs (MCP tool) and listen.mjs (CLI).
 // No dependencies: Node 18+ (built-in fetch).
 
-import { readFile, stat } from 'node:fs/promises';
+import { readFile, stat, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -11,6 +12,9 @@ export const DEFAULT_MODEL = 'gemini-flash-latest';   // Google's alias for its 
 const INLINE_MAX = 14 * 1024 * 1024;                 // up to this many bytes go inside the request
 const FILE_MAX = 2 * 1024 * 1024 * 1024;             // Files API limit per file
 const DOWNLOAD_MAX = 300 * 1024 * 1024;              // refuse bigger downloads from links
+const STALL_MS = 3 * 60 * 1000;                      // a model this silent is stuck: try another
+const MAX_MODELS = 4;                                // models to try before giving up
+const REMEMBER_MS = 6 * 60 * 60 * 1000;              // keep using a model that worked for this long
 
 // File types Gemini can hear. Video files work too (it listens to the sound track).
 export const MIME = {
@@ -35,6 +39,7 @@ export class ListenError extends Error {}
 
 const apiKey = () => process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || '';
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const debug = (...m) => { if (process.env.GEMINI_AUDIO_DEBUG) console.error('[gemini-audio]', ...m); };
 
 function auth(extra = {}) {
   const h = { ...extra };
@@ -140,8 +145,10 @@ async function apiError(res, what) {
     return new ListenError(`Gemini rejected the API key (it may be mistyped or deleted). ${KEY_HELP}`);
   }
   if (res.status === 429) {
-    return new ListenError('Gemini says the key is out of quota for now (free keys have a per-minute and a ' +
+    const err = new ListenError('Gemini says the key is out of quota for now (free keys have a per-minute and a ' +
       'per-day limit). Try again in a minute, or tomorrow if the daily limit is used up.');
+    err.status = 429;
+    return err;
   }
   if (res.status === 403) return new ListenError(`Gemini refused ${what} (403): ${msg}`);
   const err = new ListenError(`Gemini couldn't ${what} (${res.status}): ${msg}`);
@@ -162,7 +169,7 @@ async function call(url, init, what, opt) {
       throw new ListenError(`I couldn't reach Gemini (${e.cause?.code || e.message}).`);
     }
     if (res.ok) return res;
-    if ([500, 502, 503, 504].includes(res.status) && i < waits.length) { await sleep(waits[i]); continue; }
+    if ([500, 502, 503, 504].includes(res.status) && i < waits.length) { debug(`busy (${res.status}), retrying`); await sleep(waits[i]); continue; }
     throw await apiError(res, what);
   }
 }
@@ -201,19 +208,99 @@ function forget(file) {
   fetch(`${BASE}/v1beta/${file.name}`, { method: 'DELETE', headers: auth() }).catch(() => {});
 }
 
-// If Google retires the alias, pick its newest stable Flash model that can answer.
-let fallbackModel = null;
-export async function newestFlash(opt = {}) {
+// Flash models this key can use, newest stable first (previews last).
+export async function flashModels(opt = {}) {
   const res = await fetch(`${BASE}/v1beta/models?pageSize=1000`, { headers: auth(), signal: opt.signal });
-  if (!res.ok) return null;
+  if (!res.ok) return [];
   const { models = [] } = await res.json();
   const names = models
     .filter((m) => (m.supportedGenerationMethods || []).includes('generateContent'))
     .map((m) => m.name.replace(/^models\//, ''))
     .filter((n) => /^gemini-\d+(\.\d+)?-flash/.test(n) && !/(lite|image|tts|live|audio|embed|exp)/.test(n));
   const ver = (n) => parseFloat(n.match(/^gemini-(\d+(?:\.\d+)?)/)[1]);
-  names.sort((a, b) => (/preview/.test(a) - /preview/.test(b)) || ver(b) - ver(a) || a.length - b.length);
-  return names[0] || null;
+  return names.sort((a, b) => (/preview/.test(a) - /preview/.test(b)) || ver(b) - ver(a) || a.length - b.length);
+}
+export const newestFlash = async (opt) => (await flashModels(opt))[0] || null;
+
+// The model that last answered, kept in memory and in a small file so the next
+// command line run starts with it instead of waiting on a busy one again.
+let lastGood = null, loaded = false, saving = Promise.resolve();
+const memoFile = () => process.env.GEMINI_AUDIO_CACHE || path.join(tmpdir(), 'gemini-audio-model.json');
+async function remembered() {
+  if (!loaded) {   // the file is read once per run; after that memory is the truth
+    loaded = true;
+    try {
+      const m = JSON.parse(await readFile(memoFile(), 'utf8'));
+      if (typeof m.model === 'string' && typeof m.at === 'number') lastGood = m;
+    } catch { /* none yet */ }
+  }
+  return lastGood && Date.now() - lastGood.at < REMEMBER_MS ? lastGood.model : null;
+}
+function remember(model) {
+  loaded = true;
+  lastGood = model ? { model, at: Date.now() } : null;
+  const text = JSON.stringify(lastGood || {});
+  saving = saving.then(() => writeFile(memoFile(), text)).catch(() => {});
+}
+export const forgetModel = () => remember(null);
+
+// Run attempt(model, opt) on a model that works. With a model set by the user,
+// only that one. Otherwise: the last one that worked, the default, then the newest
+// Flash models, moving on when one is missing (404), busy (5xx), out of free quota
+// (429, counted per model) or silent for too long.
+async function withModel(chosen, opt, attempt, stallMs = STALL_MS) {
+  if (chosen) {
+    try { return { model: chosen, out: await attempt(chosen, opt) }; } catch (e) {
+      if (e.status === 404) {
+        throw new ListenError(`Gemini has no model called "${chosen}" for this key. Set GEMINI_MODEL to one ` +
+          'from https://ai.google.dev/gemini-api/docs/models (for example a "flash" model).');
+      }
+      throw e;
+    }
+  }
+  const tried = [];
+  const skipped = [];
+  let queue = [...new Set([await remembered(), DEFAULT_MODEL].filter(Boolean))];
+  let listed = false, again = null, lastErr = null;
+  while (tried.length < MAX_MODELS) {
+    const model = again || queue.shift();
+    if (!model) break;
+    const second = model === again;
+    again = null;
+    tried.push(model);
+    const stall = AbortSignal.timeout(stallMs);
+    const signal = opt.signal ? AbortSignal.any([opt.signal, stall]) : stall;
+    // A busy model is better swapped than waited on: one quick retry, then the next model.
+    // When there is no next model, the rest of the usual retries go to the same one.
+    const waits = opt._retryMs ?? [2000, 6000];
+    const t0 = Date.now();
+    debug(`trying ${model}`);
+    try {
+      const out = await attempt(model, { ...opt, signal, _retryMs: second ? waits.slice(1) : waits.slice(0, 1) });
+      debug(`${model} answered in ${Math.round((Date.now() - t0) / 1000)} s`);
+      remember(model);
+      return { model, out, skipped };
+    } catch (e) {
+      const stalled = stall.aborted && !opt.signal?.aborted;
+      debug(`${model}: ${stalled ? 'no answer' : e.status || e.message} after ${Math.round((Date.now() - t0) / 1000)} s`);
+      if (!stalled && ![404, 429, 500, 502, 503, 504].includes(e.status)) throw e;
+      if (model === lastGood?.model) remember(null);
+      lastErr = stalled
+        ? new ListenError(`Gemini (${model}) didn't answer for ${Math.round(stallMs / 60000) || 1} minutes; it may be overloaded. Try again later.`)
+        : e;
+      if (!queue.length && !listed) {
+        listed = true;
+        queue = (await flashModels(opt).catch(() => [])).filter((m) => !tried.includes(m));
+      }
+      if (!queue.length && e.status >= 500 && !second && waits.length > 1) again = model;
+      else if (!skipped.includes(model)) skipped.push(model);
+    }
+  }
+  if (lastErr?.status === 404) {
+    throw new ListenError('Gemini offers no Flash model for this key right now. Set GEMINI_MODEL to one ' +
+      'from https://ai.google.dev/gemini-api/docs/models.');
+  }
+  throw lastErr || new ListenError('Gemini has no model that answers right now; try again later.');
 }
 
 const QUOTE_RULE = 'Do not write out song lyrics; describe what they are about and quote at most a few words.';
@@ -295,7 +382,7 @@ function answerText(data) {
  * @param {string} a.source    YouTube link, direct audio link, or local file path
  * @param {string} [a.question] what to listen for; empty = full description
  * @param {string|number} [a.start] [a.end]  clip, e.g. "1:30"
- * @param {string} [a.model]   Gemini model id (default GEMINI_MODEL or gemini-flash-latest)
+ * @param {string} [a.model]   Gemini model id (default GEMINI_MODEL, else a working Flash model)
  * @returns {Promise<{text: string, model: string, via: string, tokens?: number}>}
  */
 export async function listen(a = {}) {
@@ -316,32 +403,19 @@ async function listenOnce(a, opt) {
   if (from !== undefined && to !== undefined && to <= from) throw new ListenError('The end time must come after the start time.');
   const media = await mediaPart(a.source, from, to, opt);
   const chosen = a.model || process.env.GEMINI_MODEL || '';
-  let model = chosen || fallbackModel || DEFAULT_MODEL;
   const body = JSON.stringify({
     contents: [{ role: 'user', parts: [media.part, { text: prompt({ question: a.question, from, to, youtube: media.youtube }) }] }],
     generationConfig: { temperature: 0.4 },
   });
   try {
-    for (let tries = 0; ; tries++) {
-      try {
-        const res = await call(`${BASE}/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
-          method: 'POST', headers: auth({ 'Content-Type': 'application/json' }), body,
-        }, 'listen to it', opt);
-        const data = await res.json();
-        return { text: answerText(data), model: data.modelVersion || model, via: media.via,
-          tokens: data.usageMetadata?.promptTokenCount };
-      } catch (e) {
-        if (e.status === 404 && !chosen && tries === 0) {
-          const next = await newestFlash(opt);
-          if (next && next !== model) { model = fallbackModel = next; continue; }
-        }
-        if (e.status === 404) {
-          throw new ListenError(`Gemini has no model called "${model}" for this key. Set GEMINI_MODEL to one ` +
-            'from https://ai.google.dev/gemini-api/docs/models (for example a "flash" model).');
-        }
-        throw e;
-      }
-    }
+    const { model, out: data } = await withModel(chosen, opt, async (m, o) => {
+      const res = await call(`${BASE}/v1beta/models/${encodeURIComponent(m)}:generateContent`, {
+        method: 'POST', headers: auth({ 'Content-Type': 'application/json' }), body,
+      }, 'listen to it', o);
+      return res.json();
+    }, a._stallMs);
+    return { text: answerText(data), model: data.modelVersion || model, via: media.via,
+      tokens: data.usageMetadata?.promptTokenCount };
   } finally {
     media.cleanup?.();
   }
@@ -349,21 +423,21 @@ async function listenOnce(a, opt) {
 
 // Quick setup check without any audio: is a key there, does Gemini accept it, which model answers.
 export async function check(opt = {}) {
-  const model = process.env.GEMINI_MODEL || DEFAULT_MODEL;
+  const chosen = process.env.GEMINI_MODEL || '';
   const lines = [apiKey() ? 'GEMINI_API_KEY is set.' : 'GEMINI_API_KEY is not set (trying anyway, in case the network adds it).'];
-  const res = await fetch(`${BASE}/v1beta/models/${encodeURIComponent(model)}`, { headers: auth(), signal: opt.signal });
-  if (res.ok) {
-    const m = await res.json();
-    lines.push(`Gemini accepted the key. Model ${model} is ready (${m.displayName || m.name}).`);
-    return { ok: true, text: lines.join('\n') };
+  try {
+    // A tiny real question: a model can be listed yet not answer (busy, retired for new keys).
+    const { model, skipped = [] } = await withModel(chosen, { signal: opt.signal, _retryMs: opt._retryMs },
+      (m, o) => call(`${BASE}/v1beta/models/${encodeURIComponent(m)}:generateContent`, {
+        method: 'POST', headers: auth({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: 'Reply with the word OK.' }] }] }),
+      }, 'answer', o), opt._stallMs ?? 45000);
+    const busy = skipped.length ? ` (${skipped.join(', ')} didn't answer, so I'll use this one)` : '';
+    lines.push(`Gemini accepted the key. Model ${model} is ready${busy}.`);
+    return { ok: true, model, text: lines.join('\n') };
+  } catch (e) {
+    if (!(e instanceof ListenError)) throw e;
+    lines.push(e.message);
+    return { ok: false, text: lines.join('\n') };
   }
-  if (res.status === 404) {
-    const next = await newestFlash(opt);
-    if (next) {
-      lines.push(`Gemini accepted the key. ${model} isn't offered, so I'll use ${next}.`);
-      return { ok: true, text: lines.join('\n') };
-    }
-  }
-  lines.push((await apiError(res, 'check the key')).message);
-  return { ok: false, text: lines.join('\n') };
 }

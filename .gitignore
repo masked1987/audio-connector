@@ -1,0 +1,6 @@
+# Keys belong in the environment settings, never in the repo
+GEMINI_API_KEY
+*.key
+.env
+.env.*
+node_modules/
