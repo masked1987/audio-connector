@@ -25,21 +25,25 @@ Rules the owner set:
 
 ## Who looks after whom
 
-The owner is still deciding these.
+Decided 2026-10-31. The kids take their caretaker's last name.
 
-- Caleb Brooks looks after **King**
-- Evelyn Hale looks after **Zac**
-- Jax Dorran looks after **Mara**
+- Caleb Brooks looks after **King Brooks**
+- Evelyn Hale looks after **Zac Hale**
+- Jax Dorran looks after **Mara Dorran**
 
 ## Characters (Higgsfield element IDs)
 
 ### Kids
 
+Full names: **King Brooks, Zac Hale, Mara Dorran**. The elements below were
+saved before the last names were chosen, so their saved names are short
+("Zac", "King", "Mara ..."); names can't be changed, so leave them.
+
 | Name | Element ID | Notes |
 |---|---|---|
-| Zac | 2a5490cc-db64-4511-ae13-74ef65ee6bc3 | Teen boy, orange hoodie, olive jacket. No last name yet. |
-| King | 4b096340-bbd7-4c36-a6a9-595d927d3ec0 | Teen boy, navy vest with crown emblem. Smooth 3D look. No last name yet. |
-| Mara (teen) | df66fa86-91b3-4edb-998c-da079ba605e1 | Smooth 3D look. No last name yet. |
+| Zac | 2a5490cc-db64-4511-ae13-74ef65ee6bc3 | Zac Hale. Teen boy, orange hoodie, olive jacket. |
+| King | 4b096340-bbd7-4c36-a6a9-595d927d3ec0 | King Brooks. Teen boy, navy vest with crown emblem. Smooth 3D look. |
+| Mara (teen) | df66fa86-91b3-4edb-998c-da079ba605e1 | Mara Dorran. Smooth 3D look. |
 | Mara (age 7) | 2076f1bf-b0d5-4b57-acf9-c5821437951a | Young Mara. |
 | Mara (adult) | 77623996-8d70-4c8a-a30f-1b239e8bb8e8 | Teal hooded coat. |
 
@@ -91,7 +95,6 @@ gauntlets).
 
 ## Open questions
 
-- Last names for Zac, King and Mara.
 - Are Tobin and Vivienne Rook family?
 - Magnus Valcrest: tied to the casino or to Malakai's research?
 - Art style: Mara (teen) and King are smooth 3D; most others are painterly.
