@@ -31,6 +31,20 @@ Rules the owner set:
   metal), like their character sheets. Don't write "painterly" in prompts.
   Before animating, compare each start picture side by side with the owner's
   sheet for that character and redo it if the look differs.
+- **No staring into the camera, no empty moments.** In shot 1 Zac just looked
+  at the viewer from behind a box; the owner found it empty. Every shot needs a
+  reason and an action tied to the story and characters.
+- **Normal speed, not slow motion.** The first flashback felt slow-motion. Ask
+  for real-time, lively movement in the prompt. Seedance 2.0 jobs showed a
+  `speedramp: "auto"` setting; check whether it can be turned off.
+- **Use the owner's references exactly.** Generated start pictures drift from
+  the owner's art. Saved elements only send their first picture to the video
+  model, so pass the owner's own sheet pictures directly as references (and
+  use the owner's own pictures as start frames where possible) instead of
+  making new look-alike pictures.
+- **Less generic stories.** Build scenes from who the characters are (Tex warm
+  but grumpy, Zac serious and guarded) and from the world, not stock beats.
+- The owner may connect ChatGPT to work alongside Claude.
 
 ## The world
 
