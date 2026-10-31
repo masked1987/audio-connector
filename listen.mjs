@@ -41,6 +41,7 @@ try {
   const [source, ...q] = rest;
   const r = await listen({ source, question: q.join(' '), start: flags.start, end: flags.end, model: flags.model });
   console.log(r.text);
+  if (r.note) console.error(`\n(${r.note})`);
   console.error(`\n(Heard by ${r.model}; ${r.via}${r.tokens ? `; ${r.tokens} tokens in` : ''}.)`);
 } catch (e) {
   console.error(e instanceof ListenError ? e.message : e);

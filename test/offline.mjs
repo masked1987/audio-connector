@@ -161,6 +161,24 @@ test('busy Gemini is retried; lyric block is explained', async () => {
   await rejects(listen({ source: 'https://youtu.be/dQw4w9WgXcQ', ...fast }), /copyrighted material/);
 });
 
+test('daily limit used up: switches to the lite model and says so', async () => {
+  reset();
+  process.env.GEMINI_MODEL = 'gemini-flash-latest';   // an earlier test left another default behind
+  globalThis.fake.spentToday = ['gemini-flash-latest'];
+  const r = await listen({ source: 'https://youtu.be/dQw4w9WgXcQ', ...fast });
+  assert.equal(r.model, 'gemini-flash-lite-latest');
+  assert.match(r.note, /free limit for today is used up.*lighter model.*back in about 14 hours/);
+  globalThis.fakeCalls.length = 0;   // the next call skips the spent model
+  assert.equal((await listen({ source: 'https://youtu.be/dQw4w9WgXcQ', ...fast })).model, 'gemini-flash-lite-latest');
+  assert.equal(globalThis.fakeCalls.filter((c) => c.url.includes('gemini-flash-latest:')).length, 0);
+  globalThis.fake.spentToday.push('gemini-flash-lite-latest');
+  await rejects(listen({ source: 'https://youtu.be/dQw4w9WgXcQ', ...fast }), /today's free limit .* used up\. It resets in about 14 hours/);
+  reset();
+  globalThis.fake.perMinute = true;   // per-minute limit: no switch, just "try again in a minute"
+  await rejects(listen({ source: 'https://youtu.be/dQw4w9WgXcQ', model: 'gemini-x', ...fast }), /Try again in a minute/);
+  assert.equal(globalThis.fakeCalls.filter((c) => c.url.includes('lite')).length, 0);
+});
+
 test('slow answers time out with a plain message', async () => {
   reset();
   globalThis.fake.slowMs = 1000;

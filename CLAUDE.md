@@ -33,6 +33,10 @@ When the owner asks you to listen to something:
   upload, wait for ACTIVE, delete afterwards).
 - Default model is the alias `gemini-flash-latest`; on 404 it falls back to the
   newest stable `gemini-X-flash` from the model list. `GEMINI_MODEL` overrides.
+- Free keys get 20 requests per model per day. When Google says the day's limit
+  is spent, it switches to `gemini-flash-lite-latest` (its own 20) and adds a note
+  saying so and when the main model is back; pass that on. Per-minute limits
+  don't switch, they just say to wait a minute. Don't fire many calls at once.
 - `node test/offline.mjs` must pass (fake Google in `test/fake-fetch.mjs`, no
-  network). Not yet tried with a real key: the first live run is still to do.
+  network). Works with the owner's real key (local mp3 files, 2026-10-31).
 - Project MCP servers need a one-time approval in Claude Code; the CLI doesn't.

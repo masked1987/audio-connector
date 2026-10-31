@@ -8,6 +8,7 @@ import { fileURLToPath } from 'node:url';
 
 export const BASE = 'https://generativelanguage.googleapis.com';
 export const DEFAULT_MODEL = 'gemini-flash-latest';   // Google's alias for its newest Flash model
+export const LITE_MODEL = 'gemini-flash-lite-latest'; // used when the day's free limit for the main model is spent
 const INLINE_MAX = 14 * 1024 * 1024;                 // up to this many bytes go inside the request
 const FILE_MAX = 2 * 1024 * 1024 * 1024;             // Files API limit per file
 const DOWNLOAD_MAX = 300 * 1024 * 1024;              // refuse bigger downloads from links
@@ -140,13 +141,28 @@ async function apiError(res, what) {
     return new ListenError(`Gemini rejected the API key (it may be mistyped or deleted). ${KEY_HELP}`);
   }
   if (res.status === 429) {
-    return new ListenError('Gemini says the key is out of quota for now (free keys have a per-minute and a ' +
+    const secs = parseInt(body?.error?.details?.find((d) => d.retryDelay)?.retryDelay, 10) || 0;
+    if (/PerDay/i.test(why)) {
+      const err = new ListenError(`Gemini says today's free limit for this key is used up. It resets in ${hoursText(secs)}.`);
+      Object.assign(err, { status: 429, daily: true, retrySecs: secs });
+      return err;
+    }
+    const err = new ListenError('Gemini says the key is out of quota for now (free keys have a per-minute and a ' +
       'per-day limit). Try again in a minute, or tomorrow if the daily limit is used up.');
+    err.status = 429;
+    return err;
   }
   if (res.status === 403) return new ListenError(`Gemini refused ${what} (403): ${msg}`);
   const err = new ListenError(`Gemini couldn't ${what} (${res.status}): ${msg}`);
   err.status = res.status;
   return err;
+}
+
+function hoursText(secs) {
+  if (!secs) return 'a few hours at most (Google resets it daily)';
+  if (secs < 3600) return 'less than an hour';
+  const h = Math.round(secs / 3600);
+  return `about ${h} hour${h === 1 ? '' : 's'}`;
 }
 
 // fetch with up to 2 retries when Gemini is busy (500/503 happen at peak times).
@@ -203,6 +219,7 @@ function forget(file) {
 
 // If Google retires the alias, pick its newest stable Flash model that can answer.
 let fallbackModel = null;
+const spentUntil = {};   // model -> time its free daily limit resets (learned from a 429)
 export async function newestFlash(opt = {}) {
   const res = await fetch(`${BASE}/v1beta/models?pageSize=1000`, { headers: auth(), signal: opt.signal });
   if (!res.ok) return null;
@@ -317,6 +334,13 @@ async function listenOnce(a, opt) {
   const media = await mediaPart(a.source, from, to, opt);
   const chosen = a.model || process.env.GEMINI_MODEL || '';
   let model = chosen || fallbackModel || DEFAULT_MODEL;
+  let note;
+  const toLite = () => {
+    note = `The usual model's free limit for today is used up, so the lighter model (${LITE_MODEL}) listened ` +
+      `instead; its answers are shorter and less detailed. The usual model is back in ${hoursText(Math.max(0, Math.round((spentUntil[model] - Date.now()) / 1000)))}.`;
+    model = LITE_MODEL;
+  };
+  if (spentUntil[model] > Date.now()) toLite();   // already found out earlier in this run
   const body = JSON.stringify({
     contents: [{ role: 'user', parts: [media.part, { text: prompt({ question: a.question, from, to, youtube: media.youtube }) }] }],
     generationConfig: { temperature: 0.4 },
@@ -329,8 +353,13 @@ async function listenOnce(a, opt) {
         }, 'listen to it', opt);
         const data = await res.json();
         return { text: answerText(data), model: data.modelVersion || model, via: media.via,
-          tokens: data.usageMetadata?.promptTokenCount };
+          tokens: data.usageMetadata?.promptTokenCount, ...(note && { note }) };
       } catch (e) {
+        if (e.daily && model !== LITE_MODEL) {
+          spentUntil[model] = Date.now() + (e.retrySecs || 3600) * 1000;
+          toLite();
+          continue;
+        }
         if (e.status === 404 && !chosen && tries === 0) {
           const next = await newestFlash(opt);
           if (next && next !== model) { model = fallbackModel = next; continue; }

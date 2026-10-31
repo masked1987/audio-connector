@@ -69,7 +69,7 @@ async function onRequest(id, method, params) {
       running.set(id, ctl);
       try {
         const r = await listen({ ...(params.arguments || {}), signal: ctl.signal });
-        const note = `\n\n(Heard by ${r.model}; ${r.via}.)`;
+        const note = `${r.note ? `\n\n(${r.note})` : ''}\n\n(Heard by ${r.model}; ${r.via}.)`;
         return reply(id, { content: [{ type: 'text', text: r.text + note }], isError: false });
       } catch (e) {
         if (ctl.signal.aborted) return;   // cancelled: the spec says not to answer

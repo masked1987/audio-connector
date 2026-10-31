@@ -44,6 +44,16 @@ globalThis.fetch = async (input, init = {}) => {
     if (gen) {
       const model = decodeURIComponent(gen[1]);
       if ((f.goneModels || []).includes(model)) return json({ error: { code: 404, message: `models/${model} is not found`, status: 'NOT_FOUND' } }, 404);
+      if ((f.spentToday || []).includes(model)) {
+        return json({ error: { code: 429, status: 'RESOURCE_EXHAUSTED', message: 'You exceeded your current quota.', details: [
+          { '@type': 'type.googleapis.com/google.rpc.QuotaFailure', violations: [{ quotaId: 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', quotaDimensions: { model }, quotaValue: '20' }] },
+          { '@type': 'type.googleapis.com/google.rpc.RetryInfo', retryDelay: '48979s' }] } }, 429);
+      }
+      if (f.perMinute) {
+        return json({ error: { code: 429, status: 'RESOURCE_EXHAUSTED', message: 'You exceeded your current quota.', details: [
+          { '@type': 'type.googleapis.com/google.rpc.QuotaFailure', violations: [{ quotaId: 'GenerateRequestsPerMinutePerProjectPerModel-FreeTier' }] },
+          { '@type': 'type.googleapis.com/google.rpc.RetryInfo', retryDelay: '20s' }] } }, 429);
+      }
       if (f.busy > 0) { f.busy--; return json({ error: { code: 503, message: 'The model is overloaded.', status: 'UNAVAILABLE' } }, 503); }
       if (f.slowMs) await new Promise((r, j) => { const t = setTimeout(r, f.slowMs); init.signal?.addEventListener('abort', () => { clearTimeout(t); j(init.signal.reason); }); });
       if (f.finish === 'RECITATION') return json({ candidates: [{ finishReason: 'RECITATION', content: { parts: [] } }] });
