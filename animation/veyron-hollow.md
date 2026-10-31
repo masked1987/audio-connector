@@ -173,6 +173,11 @@ Higgsfield video jobs, shots 1-6: aae26bda-6a39-496c-af41-fb1d9b7773bf,
 045ee568-9567-4ee6-b2d2-8ceaa767ec4a, e3a0cc8a-aa44-47d5-8b04-d24c90b73b70,
 5ae6796f-2d1c-4c6e-93e5-10c2835f9ca8. Start pictures: 2a27e960, 5be4c725,
 f794d3a6, dcd3c98c, 4f69b040, 8dcf453f (same job-id prefixes).
+ChatGPT version (2026-10-31): the owner made 6 start pictures in ChatGPT with
+`animation/zac-meets-tex-chatgpt-prompts.md`; saved in
+`animation/zac-meets-tex-chatgpt/shot1-6.png`. Much closer to the owner's 3D
+style, eyelines and mixed expressions right. Plan: animate these with
+Seedance 2.0 std (15 credits per 5 s shot, 90 for all six) once the owner says yes.
 Owner feedback: the look is too different from their own art style, and faces
 should show more mixed emotions. Known flaw: in shot 6 the charm briefly vanishes from Zac's palm before he
 closes his hand. Dialogue not checked by ear yet (Gemini key was out of quota).
