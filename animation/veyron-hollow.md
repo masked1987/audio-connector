@@ -31,6 +31,10 @@ Decided 2026-10-31. The kids take their caretaker's last name.
 - Evelyn Hale looks after **Zac Hale**
 - Jax Dorran looks after **Mara Dorran**
 
+Other ties:
+- Tex Brannock becomes Zac's close friend later on (the owner thought about
+  Tex as Zac's caretaker but chose Evelyn).
+
 ## Characters (Higgsfield element IDs)
 
 ### Kids
@@ -58,7 +62,7 @@ saved before the last names were chosen, so their saved names are short
 | Caleb Brooks | 061df7ef-9625-44d4-97cd-7b3386b125d4 | King's caretaker |
 | Evelyn Hale | aae309f4-6fe2-43ae-a86d-4ef429fa3fed | Zac's caretaker; kind, motherly |
 | Jax Dorran | 105c2253-a7f2-4138-a01a-474c064a6829 | Mara's caretaker. **Partly blind**: sees only up close, walks with a cane |
-| Tex Brannock | f41069a9-4f43-488e-a228-427d720c195a | Blacksmith, owns Tex's Forge |
+| Tex Brannock | f41069a9-4f43-488e-a228-427d720c195a | Blacksmith, owns Tex's Forge. Becomes Zac's close friend later on |
 | Vivienne Rook | 7286a01e-1261-45c4-b692-e7f6026cd7b1 | Owns the Raven's Rest |
 | Tobin Rook | e459f236-daee-4d81-95ff-44eeb47c5fb7 | "The survivor". Shares a last name with Vivienne; family link not decided yet |
 | Lucan Vale | 2f692fbd-2409-406b-8ab5-bc8f48873a20 | Dark coat, red cape, star badge |
@@ -99,8 +103,9 @@ gauntlets).
 
 ## Open questions
 
-- Zac's "forge keepsake" (brass wheel charm): what is it, and is it tied to Tex
-  Brannock or his forge?
+- Zac's "forge keepsake" (brass wheel charm): what is it? Zac already has it at
+  age 10, but his friendship with Tex comes later, so it may come from somewhere
+  else, or from an earlier meeting with Tex.
 - Are Tobin and Vivienne Rook family?
 - Magnus Valcrest: tied to the casino or to Malakai's research?
 - Art style: Mara (teen) and King are smooth 3D; most others are painterly.
