@@ -31,7 +31,8 @@ The owner also uses these sessions for an animated story. Its characters,
 places and gear are saved in the owner's Higgsfield account. Read
 `animation/veyron-hollow.md` first; it has every name, Higgsfield element ID,
 who looks after whom, and the open questions. Keep it up to date. Never spend
-Higgsfield credits without the owner's go-ahead and a stated price.
+Higgsfield credits without the owner's go-ahead and a stated price. Videos:
+only Seedance 2.0, Seedance 2.5 or Kling 4.0, at 480p, 9:16 (vertical).
 
 ## Things that bite
 

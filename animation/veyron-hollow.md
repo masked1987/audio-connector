@@ -10,6 +10,8 @@ Rules the owner set:
   price is said first. Balance on 2026-10-31: 283.5 credits, Pro plan.
 - Element names can't be changed once saved, so confirm full names first.
 - Every character has a first and last name.
+- Video settings: use only **Seedance 2.0, Seedance 2.5 or Kling 4.0**, at
+  **480p**, in **9:16** (vertical). Don't pick other models or sizes.
 
 ## The world
 
