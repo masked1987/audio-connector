@@ -12,6 +12,11 @@ Rules the owner set:
 - Every character has a first and last name.
 - Video settings: use only **Seedance 2.0, Seedance 2.5 or Kling 4.0**, at
   **480p**, in **9:16** (vertical). Don't pick other models or sizes.
+  Kling 4.0 has no 480p; its lowest is 720p. Saved elements (`<<<id>>>` in the
+  prompt) are only listed as working with Seedance 2.0 of these three.
+  Prices checked 2026-10-31 for a 10-second 9:16 clip: Seedance 2.0 std 480p
+  30 credits, Seedance 2.0 fast 480p 10, Seedance 2.5 480p 30, Kling 4.0 720p
+  22.5.
 
 ## The world
 
