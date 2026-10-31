@@ -34,8 +34,8 @@ Decided 2026-10-31. The kids take their caretaker's last name.
 Other ties:
 - Tex Brannock becomes Zac's close friend later on (the owner thought about
   Tex as Zac's caretaker but chose Evelyn). Zac met Tex once when he was
-  little and was amazed by Tex's craftsmanship; that is where his "forge
-  keepsake" (brass wheel charm) comes from.
+  little and was amazed by Tex's craftsmanship. Tex laughed and gave him a gift:
+  the brass wheel charm Zac carries as his "forge keepsake".
 
 ## Characters (Higgsfield element IDs)
 
