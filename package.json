@@ -1,0 +1,10 @@
+{
+  "name": "audio-connector",
+  "version": "1.0.0",
+  "description": "Lets Claude listen to music: an MCP server and CLI that send audio to the Google Gemini API.",
+  "type": "module",
+  "private": true,
+  "bin": { "listen": "listen.mjs", "gemini-audio-mcp": "server.mjs" },
+  "scripts": { "test": "node test/offline.mjs", "check": "node listen.mjs --check" },
+  "engines": { "node": ">=20" }
+}

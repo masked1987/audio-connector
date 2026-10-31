@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "gemini-audio": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["${CLAUDE_PROJECT_DIR:-.}/server.mjs"]
+    }
+  }
+}
