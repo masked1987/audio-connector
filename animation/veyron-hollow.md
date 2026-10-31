@@ -121,17 +121,28 @@ gauntlets).
 
 ### Flashback: little Zac meets Tex (not made yet)
 
-About 30 seconds, 3 clips of 10 s, Seedance 2.0 fast, 480p, 9:16, with sound.
-Quoted 30 credits in total (10 per clip); waiting for the owner's yes.
+Owner wants top quality motion and control, characters and background kept
+true to the saved elements; shot length is up to Claude. Plan (2026-10-31):
+6 shots of 5 s, about 30 s in total, made in two steps, each needing its own yes.
+
+- Step 1, start pictures: one 9:16 picture per shot with Nano Banana Pro using
+  the saved elements, 2 credits each = 12 credits. Owner checks them first.
+- Step 2, videos: Seedance 2.0 **std**, 480p, 9:16, with sound, each picture
+  as the start frame, 15 credits per 5 s shot = 90 credits.
+- Total about 102 credits (cheaper fast-mode videos: 30 + 12 = 42).
+- Seedance 2.0 shots are 4 to 15 s; 3 s is not possible.
+
 Elements: Zac-Hale-Age-10, Tex-Brannock, Texs-Forge-Outside, Texs-Forge-Inside,
 Heated-Sword.
 
-1. Dusk at the docks. Zac hides by the open forge doors and spies on Tex
-   hammering a glowing sword; sparks fly. Zac whispers "Whoa..." Tex, without
-   turning: "You can come in, you know. I don't bite."
-2. Inside. Zac steps closer, eyes wide. Tex plunges the blade into water, steam
-   hisses. Zac: "How do you make it shine like that?" Tex: "Fire, patience, and
-   a stubborn arm."
-3. Tex laughs, takes a small brass wheel charm from his bench and puts it in
-   Zac's hand: "Keep it, little one. Every smith starts somewhere." Zac holds it
-   tight and smiles.
+1. Outside at dusk. Zac hides behind crates by the open forge doors, peeking at
+   the glow and sparks. Zac whispers: "Whoa..."
+2. Inside. Tex hammers the glowing Heated Sword on the anvil, sparks flying.
+   Without turning: "You can come in, you know. I don't bite."
+3. Zac steps shyly through the doorway, eyes wide, and creeps toward the anvil.
+4. Tex plunges the blade into the water trough; steam hisses. Zac: "How do you
+   make it shine like that?"
+5. Tex grins: "Fire, patience, and a stubborn arm." He laughs and picks a small
+   brass wheel charm off his workbench.
+6. Close-up. Tex puts the charm in Zac's hand: "Keep it, little one. Every
+   smith starts somewhere." Zac holds it tight and smiles.
